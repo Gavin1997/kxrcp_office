@@ -193,6 +193,7 @@ router.beforeEach((to: ToRouteType, _from, next) => {
       toCorrectRoute();
     }
   } else {
+    // 强制定位到/ 官网
     if (to.path !== "/login") {
       if (whiteList.indexOf(to.path) !== -1) {
         console.log(2);
@@ -203,7 +204,8 @@ router.beforeEach((to: ToRouteType, _from, next) => {
         next({ path: "/" });
       }
     } else {
-      // TODO:
+      // TODO: 路由是login
+      // next();
       next({ path: "/" });
     }
   }
