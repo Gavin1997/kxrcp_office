@@ -44,13 +44,13 @@ const features = ref([
     title: "明星订阅",
     description: "订阅你喜欢的明星，第一时间获取最新动态和独家资讯",
     color: "#EE72C0"
-  },
-  {
-    icon: markRaw(Star),
-    title: "追星社区",
-    description: "打榜应援、活动组织、周边，全方位追星体验",
-    color: "#7B6BEE"
   }
+  // {
+  //   icon: markRaw(Star),
+  //   title: "追星社区",
+  //   description: "打榜应援、活动组织、周边，全方位追星体验",
+  //   color: "#7B6BEE"
+  // }
 ]);
 
 // 特色亮点
