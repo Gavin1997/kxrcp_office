@@ -276,7 +276,6 @@ onMounted(() => {
         <Motion>
           <h2 class="cta-title">准备好开始你的嗑星之旅了吗？</h2>
         </Motion>
-
         <Motion :delay="200">
           <div class="cta-actions">
             <el-button
