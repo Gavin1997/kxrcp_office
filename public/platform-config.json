@@ -22,5 +22,19 @@
   "CachingAsyncRoutes": false,
   "TooltipEffect": "light",
   "ResponsiveStorageNameSpace": "responsive-",
-  "MenuSearchHistory": 6
+  "MenuSearchHistory": 6,
+  "DownloadCodes": [
+    {
+      "platform": "iOS",
+      "image": "/iosCode.png",
+      "link": "http://web.kejoystars.com",
+      "desc": "扫码下载 iOS 版"
+    },
+    {
+      "platform": "Android",
+      "image": "/androidCode.png",
+      "link": "http://web.kejoystars.com/app-release.apk",
+      "desc": "扫码下载 Android 版"
+    }
+  ]
 }

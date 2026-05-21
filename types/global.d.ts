@@ -108,6 +108,12 @@ declare global {
     TooltipEffect?: Effect;
     ResponsiveStorageNameSpace?: string;
     MenuSearchHistory?: number;
+    DownloadCodes?: Array<{
+      platform: string;
+      image: string;
+      link: string;
+      desc: string;
+    }>;
   }
 
   /**

@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import Motion from "./utils/motion";
-import { ref, markRaw } from "vue";
-import { useRouter } from "vue-router";
+import { ref, markRaw, onMounted } from "vue";
 import { message } from "@/utils/message";
-import { Download, User, VideoPlay, Bell, Star } from "@element-plus/icons-vue";
+import { Download, VideoPlay, Bell, Star } from "@element-plus/icons-vue";
 
 // 导入截图
 import screenshot1 from "@/assets/images/1.png";
@@ -15,7 +14,15 @@ defineOptions({
   name: "KexinrenLanding"
 });
 
-const router = useRouter();
+const nowYear = new Date().getFullYear();
+const { VITE_PUBLIC_PATH } = import.meta.env;
+
+interface DownloadCode {
+  platform: string;
+  image: string;
+  link: string;
+  desc: string;
+}
 
 // 截图数据
 const screenshots = ref([
@@ -25,46 +32,95 @@ const screenshots = ref([
   { id: 4, src: screenshot4, label: "cp订阅" }
 ]);
 
+// 默认下载配置，运行时会优先读取 public/platform-config.json 中的 DownloadCodes
+const defaultDownloadCodes: DownloadCode[] = [
+  {
+    platform: "iOS",
+    image: "/iosCode.png",
+    link: "http://web.kejoystars.com",
+    desc: "扫码下载 iOS 版"
+  },
+  {
+    platform: "Android",
+    image: "/androidCode.png",
+    link: "http://web.kejoystars.com/app-release.apk",
+    desc: "扫码下载 Android 版"
+  }
+];
+
+const downloadCodes = ref<DownloadCode[]>(defaultDownloadCodes);
+
 // 功能列表
 const features = ref([
-  // {
-  //   icon: markRaw(User),
-  //   title: "趣味交友",
-  //   description: "遇见志同道合的星友，一起追星一起嗑，让追星不再孤单",
-  //   color: "#EE72C0"
-  // },
   {
     icon: markRaw(VideoPlay),
-    title: "追剧神器",
-    description: "海量影视资讯、官方CP、更新进度，同步更新",
+    title: "影视追踪",
+    description: "聚合影视资讯、官方CP动态与剧集更新进度，热门作品实时同步",
     color: "#7B6BEE"
   },
   {
     icon: markRaw(Bell),
     title: "明星订阅",
-    description: "订阅你喜欢的明星，第一时间获取最新动态和独家资讯",
+    description: "订阅心动女星，第一时间接收社媒动态、高清美图与独家资讯",
     color: "#EE72C0"
+  },
+  {
+    icon: markRaw(Star),
+    title: "追星社区",
+    description: "同步IG、X全球女星新鲜物料，支持高清保存、作品检索与糖果互动",
+    color: "#7B6BEE"
   }
-  // {
-  //   icon: markRaw(Star),
-  //   title: "追星社区",
-  //   description: "打榜应援、活动组织、周边，全方位追星体验",
-  //   color: "#7B6BEE"
-  // }
 ]);
 
 // 特色亮点
 const highlights = ref([
   { number: "1000+", label: "活跃用户" },
   { number: "500+", label: "入驻明星" },
-  { number: "20000+", label: "影视资讯" },
+  // { number: "20000+", label: "影视资讯" },
   { number: "24/7", label: "实时更新" }
 ]);
 
+const scrollToDownloadCodes = () => {
+  document.getElementById("downloadCodes")?.scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+};
+
+const loadDownloadCodes = async () => {
+  try {
+    const response = await fetch(`${VITE_PUBLIC_PATH}platform-config.json`, {
+      cache: "no-store"
+    });
+    const config = (await response.json()) as PlatformConfigs;
+
+    if (Array.isArray(config.DownloadCodes) && config.DownloadCodes.length) {
+      downloadCodes.value = config.DownloadCodes;
+    }
+  } catch {
+    downloadCodes.value = defaultDownloadCodes;
+  }
+};
+
 const handleGetStarted = () => {
-  message("欢迎来到嗑星人！", { type: "success" });
-  // 可以跳转到其他页面
-  // router.push("/welcome");
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isIOS =
+    /iphone|ipad|ipod/.test(userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const isAndroid = /android/.test(userAgent);
+  const targetCode = downloadCodes.value.find(item => {
+    if (isIOS) return item.platform === "iOS";
+    if (isAndroid) return item.platform === "Android";
+    return false;
+  });
+
+  if (targetCode) {
+    window.open(targetCode.link, "_blank", "noopener,noreferrer");
+    return;
+  }
+
+  scrollToDownloadCodes();
+  message("请选择对应系统扫码下载", { type: "info" });
 };
 
 const handleLearnMore = () => {
@@ -72,6 +128,10 @@ const handleLearnMore = () => {
   const featuresSection = document.getElementById("features");
   featuresSection?.scrollIntoView({ behavior: "smooth" });
 };
+
+onMounted(() => {
+  loadDownloadCodes();
+});
 </script>
 
 <template>
@@ -94,15 +154,14 @@ const handleLearnMore = () => {
         </Motion>
 
         <Motion :delay="200">
-          <p class="hero-subtitle">遇见同好 · 一起追星 · 共享快乐</p>
+          <p class="hero-subtitle">编织全球女星星网 奔赴浩瀚璀璨星域</p>
           <p class="hero-description">
             <!-- 全新的追星社交平台，让你和千万星友一起，追剧、交友、追星无缝衔接
               -->
             嗑星人是一款专为海外女明星粉丝打造的追星神器。 实时追踪偶像在
             Instagram、X（原Twitter）
             等平台的最新动态，第一时间获取营业照、生活分享和影视资讯。
-            支持高清图片一键保存，并提供智能推送提醒，不错过任何营业瞬间。
-            所有内容自动汇总展示，追星更轻松、更高效。
+            支持高清图片一键保存，并提供智能推送提醒，不错过任何精彩瞬间。
           </p>
           <p class="hero-subtitle">“嗑星人——人人嗑美拉 💫”</p>
         </Motion>
@@ -215,8 +274,7 @@ const handleLearnMore = () => {
       <div class="cta-background"></div>
       <div class="cta-content">
         <Motion>
-          <h2 class="cta-title">准备好开始你的追星之旅了吗？</h2>
-          <p class="cta-subtitle">加入我们，和千万星友一起嗑CP，追爱豆！</p>
+          <h2 class="cta-title">准备好开始你的星光之旅了吗？</h2>
         </Motion>
 
         <Motion :delay="200">
@@ -233,6 +291,25 @@ const handleLearnMore = () => {
             </el-button>
           </div>
         </Motion>
+
+        <Motion :delay="300">
+          <div id="downloadCodes" class="download-codes">
+            <div
+              v-for="item in downloadCodes"
+              :key="item.platform"
+              class="download-code-item"
+            >
+              <img
+                :src="item.image"
+                :alt="`${item.platform} 下载二维码`"
+                class="download-code-img"
+                loading="lazy"
+              />
+              <div class="download-code-platform">{{ item.platform }}</div>
+              <div class="download-code-desc">{{ item.desc }}</div>
+            </div>
+          </div>
+        </Motion>
       </div>
     </section>
 
@@ -244,7 +321,7 @@ const handleLearnMore = () => {
           <span class="footer-brand">嗑星人</span>
         </div>
         <div class="footer-text">
-          <p>© 2025 嗑星人 KE XING REN. All rights reserved.</p>
+          <p>© {{ nowYear }} 嗑星人 KE XING REN. All rights reserved.</p>
         </div>
       </div>
     </footer>
@@ -442,7 +519,7 @@ const handleLearnMore = () => {
 
 .highlights {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   padding: 2rem;
   background: rgb(255 255 255 / 10%);
@@ -705,6 +782,50 @@ const handleLearnMore = () => {
 .cta-actions {
   display: flex;
   justify-content: center;
+}
+
+.download-codes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(150px, 1fr));
+  gap: 1.5rem;
+  max-width: 420px;
+  margin: 2rem auto 0;
+
+  @media (width <= 520px) {
+    grid-template-columns: 1fr;
+    max-width: 220px;
+  }
+}
+
+.download-code-item {
+  padding: 1rem;
+  color: #333;
+  background: rgb(255 255 255 / 92%);
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 14%);
+}
+
+.download-code-img {
+  display: block;
+  width: 132px;
+  height: 132px;
+  margin: 0 auto 0.8rem;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.download-code-platform {
+  margin-bottom: 0.2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #7b6bee;
+}
+
+.download-code-desc {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #666;
 }
 
 .cta-button-large {
