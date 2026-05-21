@@ -274,7 +274,7 @@ onMounted(() => {
       <div class="cta-background"></div>
       <div class="cta-content">
         <Motion>
-          <h2 class="cta-title">准备好开始你的星光之旅了吗？</h2>
+          <h2 class="cta-title">准备好开始你的嗑星之旅了吗？</h2>
         </Motion>
 
         <Motion :delay="200">
