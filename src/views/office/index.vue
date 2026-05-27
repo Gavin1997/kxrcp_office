@@ -4,7 +4,7 @@ import { ref, markRaw, onMounted } from "vue";
 import { message } from "@/utils/message";
 import { Download, VideoPlay, Bell, Star } from "@element-plus/icons-vue";
 
-// 导入截图
+// 导入截图发
 import screenshot1 from "@/assets/images/1.png";
 import screenshot2 from "@/assets/images/2.png";
 import screenshot3 from "@/assets/images/3.png";
