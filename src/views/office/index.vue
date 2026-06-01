@@ -35,6 +35,12 @@ const screenshots = ref([
 // 默认下载配置，运行时会优先读取 public/platform-config.json 中的 DownloadCodes
 const defaultDownloadCodes: DownloadCode[] = [
   {
+    platform: "IOS/Android",
+    image: "/webCode.png",
+    link: "http://web.kejoystars.com",
+    desc: "扫码下载 IOS/Android 版"
+  },
+  {
     platform: "iOS",
     image: "/iosCode.png",
     link: "http://web.kejoystars.com",
@@ -138,7 +144,7 @@ onMounted(() => {
   <div class="landing-page">
     <!-- Hero Section -->
     <section class="hero-section">
-      <div class="hero-background"></div>
+      <div class="hero-background" />
       <div class="hero-content">
         <Motion>
           <div class="logo-container">
@@ -253,7 +259,7 @@ onMounted(() => {
             <div class="screenshot-item">
               <div class="phone-mockup">
                 <div class="phone-frame">
-                  <div class="phone-notch"></div>
+                  <div class="phone-notch" />
                   <img
                     :src="screenshot.src"
                     :alt="screenshot.label"
@@ -271,7 +277,7 @@ onMounted(() => {
 
     <!-- CTA Section -->
     <section class="cta-section">
-      <div class="cta-background"></div>
+      <div class="cta-background" />
       <div class="cta-content">
         <Motion>
           <h2 class="cta-title">准备好开始你的嗑星之旅了吗？</h2>
@@ -791,6 +797,11 @@ onMounted(() => {
   margin: 2rem auto 0;
 
   @media (width <= 520px) {
+    grid-template-columns: 1fr;
+    max-width: 220px;
+  }
+
+  &:has(> .download-code-item:only-child) {
     grid-template-columns: 1fr;
     max-width: 220px;
   }
