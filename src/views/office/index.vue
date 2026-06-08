@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Motion from "./utils/motion";
 import { ref, markRaw, onMounted } from "vue";
-import { message } from "@/utils/message";
 import { Download, VideoPlay, Bell, Star } from "@element-plus/icons-vue";
 
 // 导入截图发
@@ -55,6 +54,7 @@ const defaultDownloadCodes: DownloadCode[] = [
 ];
 
 const downloadCodes = ref<DownloadCode[]>(defaultDownloadCodes);
+const downloadUrl = "http://web.kejoystars.com";
 
 // 功能列表
 const features = ref([
@@ -86,13 +86,6 @@ const highlights = ref([
   { number: "24/7", label: "实时更新" }
 ]);
 
-const scrollToDownloadCodes = () => {
-  document.getElementById("downloadCodes")?.scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
-};
-
 const loadDownloadCodes = async () => {
   try {
     const response = await fetch(`${VITE_PUBLIC_PATH}platform-config.json`, {
@@ -109,24 +102,7 @@ const loadDownloadCodes = async () => {
 };
 
 const handleGetStarted = () => {
-  const userAgent = navigator.userAgent.toLowerCase();
-  const isIOS =
-    /iphone|ipad|ipod/.test(userAgent) ||
-    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-  const isAndroid = /android/.test(userAgent);
-  const targetCode = downloadCodes.value.find(item => {
-    if (isIOS) return item.platform === "iOS";
-    if (isAndroid) return item.platform === "Android";
-    return false;
-  });
-
-  if (targetCode) {
-    window.open(targetCode.link, "_blank", "noopener,noreferrer");
-    return;
-  }
-
-  scrollToDownloadCodes();
-  message("请选择对应系统扫码下载", { type: "info" });
+  window.open(downloadUrl, "_blank", "noopener,noreferrer");
 };
 
 const handleLearnMore = () => {
